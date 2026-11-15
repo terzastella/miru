@@ -12,6 +12,7 @@ App desktop per Windows: progresso episodi, voti, note, tag e scoperta di nuovi 
 </p>
 
 <p align="center">
+  <a href="https://github.com/terzastella/miru/releases/latest"><img alt="ultima release" src="https://img.shields.io/github/v/release/terzastella/miru?style=flat-square"></a>
   <img alt="licenza MIT" src="https://img.shields.io/badge/license-MIT-ff5a2c">
   <img alt="Windows 10/11" src="https://img.shields.io/badge/platform-Windows%2010%2F11-0078d4">
   <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000">
@@ -51,6 +52,10 @@ MIRU è un tracker anime locale. La UI è Next.js 16 (App Router, React 19, Tail
 - **Ricerca** con aggiunta rapida alla libreria.
 - **Export / import** della libreria in JSON, con preferenze e storico.
 - **Interfaccia IT/EN** (lingua presa dal sistema al primo avvio), tema scuro, layout fluido da 900 px in su (nessun overflow orizzontale, verificato a 900/1024/1280/1440/1920).
+
+## Scarica
+
+**[MIRU.exe](https://github.com/terzastella/miru/releases/latest)** — Windows 10/11, singolo file portabile, nessuna installazione e nessun Node.js. Lo SHA-256 è pubblicato nelle note della release.
 
 ## Requisiti
 
