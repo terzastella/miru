@@ -21,3 +21,11 @@ dev-server.log
 *.tsbuildinfo
 
 .serena/
+# Sicurezza: non committare mai file di ambiente / credenziali
+.env
+.env.*
+!.env.example
+
+# Editor e IDE
+.vscode/
+.idea/
