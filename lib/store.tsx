@@ -22,6 +22,7 @@ import {
   type Preferences,
   progressOf,
 } from './types'
+import { localISODate, mergeLibraryState, uid } from './library-merge'
 
 /**
  * Guest (local) persistence adapter.
@@ -80,8 +81,25 @@ const localAdapter = {
         preferences: { ...defaultPreferences, ...(parsed.preferences ?? {}) },
         dismissedRecommendations: parsed.dismissedRecommendations ?? [],
       }
-    } catch {
-      return emptyState
+    } catch (error) {
+      // dati illeggibili: mettiamo da parte il blob prima di ripartire pulito,
+      // così un guasto non distrugge definitivamente la libreria
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY)
+        if (raw) {
+          window.localStorage.setItem(
+            `${STORAGE_KEY}.corrupted.${Date.now()}`,
+            raw,
+          )
+        }
+      } catch {
+        /* spazio esaurito: niente quarantena, si prosegue */
+      }
+      console.log('[miru] state unreadable, quarantined', (error as Error).message)
+      return {
+        ...emptyState,
+        preferences: { ...defaultPreferences, locale: detectLocale() },
+      }
     }
   },
   write(state: PersistedState) {
@@ -94,14 +112,8 @@ const localAdapter = {
   },
 }
 
-function uid() {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto)
-    return crypto.randomUUID()
-  return `id-${Math.random().toString(36).slice(2)}-${Date.now()}`
-}
-
 function today() {
-  return new Date().toISOString().slice(0, 10)
+  return localISODate()
 }
 
 function statusForEpisodes(
@@ -426,41 +438,9 @@ export function MiruProvider({ children }: { children: React.ReactNode }) {
       importState: (payload) => {
         let imported = 0
         setState((prev) => {
-          const byAnime = new Map(prev.entries.map((e) => [e.animeId, e]))
-          for (const incoming of payload.entries ?? []) {
-            if (!incoming?.animeId || !incoming.anime) continue
-            const existing = byAnime.get(incoming.animeId)
-            imported += 1
-            if (!existing) {
-              byAnime.set(incoming.animeId, { ...incoming, id: incoming.id || uid() })
-              continue
-            }
-            // merge: newest updatedAt wins per record, watched episodes are unioned
-            const newest =
-              new Date(incoming.updatedAt ?? 0) > new Date(existing.updatedAt)
-                ? incoming
-                : existing
-            byAnime.set(incoming.animeId, {
-              ...existing,
-              ...newest,
-              id: existing.id,
-              watchedEpisodes: [
-                ...new Set([
-                  ...existing.watchedEpisodes,
-                  ...(incoming.watchedEpisodes ?? []),
-                ]),
-              ].sort((a, b) => a - b),
-              customTags: [
-                ...new Set([...existing.customTags, ...(incoming.customTags ?? [])]),
-              ],
-              rewatchCount: Math.max(existing.rewatchCount, incoming.rewatchCount ?? 0),
-            })
-          }
-          return {
-            ...prev,
-            entries: [...byAnime.values()],
-            preferences: { ...prev.preferences, ...(payload.preferences ?? {}) },
-          }
+          const merged = mergeLibraryState(prev, payload)
+          imported = merged.imported
+          return merged.state
         })
         return imported
       },

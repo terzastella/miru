@@ -9,6 +9,8 @@ versioning [SemVer](https://semver.org/lang/it/).
 
 ### Added
 
+- Test unitari con `node:test` su merge dell'import, date locali e ricerca locale;
+  la CI li esegue prima del build.
 - App desktop Windows (Tauri v2 + WebView2) distribuita come singolo eseguibile
   portabile, accanto alla versione web Next.js 16.
 - Catalogo locale precaricato (~1200 titoli da AniList) in IndexedDB, con schermata
@@ -28,6 +30,12 @@ versioning [SemVer](https://semver.org/lang/it/).
 
 ### Fixed
 
+- L'import di un backup ripristina anche lo storico attività, che prima veniva
+  scartato (`mergeLibraryState` in `lib/library-merge.ts`).
+- Se il salvataggio locale è illeggibile viene copiato in
+  `miru.state.v1.corrupted.<timestamp>` invece di essere sovrascritto dallo stato vuoto.
+- Le date di inizio/fine usano il calendario locale (`localISODate`) e non più UTC,
+  che in Italia spostava la data di un giorno tra mezzanotte e l'una.
 - La libreria non viene più sovrascritta con lo stato vuoto durante l'idratazione:
   il salvataggio è guardato da `ready` (`lib/store.tsx`).
 - Il dettaglio anime fa fallback Jikan → AniList invece di restituire una cache vuota

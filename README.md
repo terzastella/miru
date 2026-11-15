@@ -85,7 +85,9 @@ npm run desktop:portable   # exe + copy to dist/MIRU.exe
 
 ## Data and privacy
 
-Everything stays on your machine: no account, no backend, no telemetry.
+**Desktop app:** everything stays on your machine — no account, no backend, no telemetry.
+
+**Web version:** identical data handling, but the production web build includes Vercel Analytics (aggregated page views, no personal data). The desktop build excludes it at compile time, so the executable never phones home.
 
 - library, preferences and activity: the webview's `localStorage`;
 - prefetched catalog: IndexedDB (7-day TTL);

@@ -85,7 +85,9 @@ npm run desktop:portable   # exe + copia in dist/MIRU.exe
 
 ## Dati e privacy
 
-Tutto è locale: nessun account, nessun backend, nessuna telemetria.
+**App desktop:** tutto resta sulla tua macchina — nessun account, nessun backend, nessuna telemetria.
+
+**Versione web:** gestione dati identica, ma il build web di produzione include Vercel Analytics (visualizzazioni aggregate, nessun dato personale). Il build desktop la esclude in fase di compilazione, quindi l'eseguibile non contatta nessun servizio di analytics.
 
 - libreria, preferenze e attività: `localStorage` della webview;
 - catalogo precaricato: IndexedDB (TTL 7 giorni);

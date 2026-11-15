@@ -29,6 +29,9 @@ jobs:
       - name: Type-check
         run: npx tsc --noEmit
 
+      - name: Test
+        run: npm test
+
       - name: Build web (route API incluse)
         run: npm run build
 

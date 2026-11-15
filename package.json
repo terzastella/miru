@@ -10,7 +10,8 @@
     "build:desktop": "node scripts/build-desktop.mjs",
     "desktop:dev": "node scripts/tauri.mjs dev",
     "desktop:build": "node scripts/tauri.mjs build --no-bundle",
-    "desktop:portable": "node scripts/tauri.mjs build --no-bundle && node scripts/copy-portable.mjs"
+    "desktop:portable": "node scripts/tauri.mjs build --no-bundle && node scripts/copy-portable.mjs",
+    "test": "tsx --test tests/*.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -39,6 +40,7 @@
     "puppeteer-core": "^25.17.0",
     "shadcn": "^4.8.0",
     "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
     "typescript": "5.7.3"
   }
 }
