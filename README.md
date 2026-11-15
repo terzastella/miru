@@ -8,7 +8,7 @@
 Desktop app for Windows: episode progress, ratings, notes, tags and discovery from Jikan, AniList and Kitsu.</p>
 
 <p align="center">
-  <a href="README.it.md">Italiano</a>
+  <strong>English</strong> · <a href="README.it.md">Italiano</a>
 </p>
 
 <p align="center">

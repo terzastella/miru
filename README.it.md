@@ -8,7 +8,7 @@
 App desktop per Windows: progresso episodi, voti, note, tag e scoperta di nuovi titoli da Jikan, AniList e Kitsu.</p>
 
 <p align="center">
-  <a href="README.md">English</a>
+  <strong>Italiano</strong> · <a href="README.md">English</a>
 </p>
 
 <p align="center">
