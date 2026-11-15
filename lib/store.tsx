@@ -47,6 +47,13 @@ const defaultPreferences: Preferences = {
   displayName: '',
 }
 
+/** Lingua di partenza: quella del sistema, con italiano solo se il sistema è italiano. */
+function detectLocale(): Preferences['locale'] {
+  if (typeof navigator === 'undefined') return 'it'
+  const languages = [navigator.language, ...(navigator.languages ?? [])]
+  return languages.some((lang) => lang?.toLowerCase().startsWith('it')) ? 'it' : 'en'
+}
+
 const emptyState: PersistedState = {
   entries: [],
   activity: [],
@@ -59,7 +66,13 @@ const localAdapter = {
     if (typeof window === 'undefined') return emptyState
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY)
-      if (!raw) return emptyState
+      // primo avvio: nessuna preferenza salvata, scegliamo la lingua dal sistema
+      if (!raw) {
+        return {
+          ...emptyState,
+          preferences: { ...defaultPreferences, locale: detectLocale() },
+        }
+      }
       const parsed = JSON.parse(raw) as Partial<PersistedState>
       return {
         entries: parsed.entries ?? [],
@@ -176,6 +189,11 @@ export function MiruProvider({ children }: { children: React.ReactNode }) {
     if (!ready) return
     localAdapter.write(state)
   }, [state, ready])
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    document.documentElement.lang = state.preferences.locale
+  }, [state.preferences.locale])
 
   const log = useCallback(
     (

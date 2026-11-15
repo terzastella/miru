@@ -28,16 +28,23 @@ const numeric = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'MIRU — diario anime',
+  title: 'MIRU — anime tracker',
   description:
-    'MIRU è il diario anime personale: progresso episodi, voti, note, tag e scoperta di nuovi titoli da Jikan, AniList e Kitsu.',
+    'MIRU is a local anime tracker for Windows: episode progress, ratings, notes and tags, with discovery from Jikan, AniList and Kitsu.',
   generator: 'v0.app',
   applicationName: 'MIRU',
-  keywords: ['anime', 'tracker', 'diario', 'watchlist', 'MyAnimeList', 'AniList'],
+  keywords: [
+    'anime tracker',
+    'watchlist',
+    'diario anime',
+    'MyAnimeList',
+    'AniList',
+    'Tauri',
+  ],
   openGraph: {
-    title: 'MIRU — diario anime',
+    title: 'MIRU — anime tracker',
     description:
-      'Traccia, valuta e scopri anime. Progresso episodi, voti personali, note e tag.',
+      'Track, rate and discover anime. Episode progress, personal scores, notes and tags — all stored on your device.',
     type: 'website',
   },
 }
