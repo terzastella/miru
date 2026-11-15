@@ -13,7 +13,12 @@ a runtime. Aggiornato 15/11/2026: icona, layout fluido, catalogo precaricato.
   (`node scripts/check-layout.mjs` con `npm start` attivo).
 - Scrollbar: thumb scuro arrotondato senza frecce (globals.css), niente barra nativa.
 - Persistenza: aggiunto un titolo, chiuso e riaperto l'exe → libreria intatta.
-- README.md (IT, logo + screenshot in `docs/assets/*.webp`) e LICENSE MIT.
+- Lingua: primo avvio senza preferenze → segue `navigator.language` (verificato in browser:
+  `en-US` → nav "Home Library Recommended…", `it-IT` → "Home Libreria Consigliati…");
+  `<html lang>` segue la preferenza, il cambio resta in Impostazioni → Lingua.
+- README.md in inglese + `README.it.md` (versione italiana, con link incrociati);
+  metadati neutri/inglesi in `app/layout.tsx`.
+- LICENSE MIT.
 - `tsc --noEmit` = 0. Web build invariata (`/api/anime/*` attive).
 
 ## Bug corretto (importante)

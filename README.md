@@ -4,11 +4,15 @@
 
 <h1 align="center">MIRU</h1>
 
-<p align="center">Il tuo diario anime.<br/>
-App desktop per Windows: progresso episodi, voti, note, tag e scoperta di nuovi titoli da Jikan, AniList e Kitsu.</p>
+<p align="center">Your anime diary.<br/>
+Desktop app for Windows: episode progress, ratings, notes, tags and discovery from Jikan, AniList and Kitsu.</p>
 
 <p align="center">
-  <img alt="licenza MIT" src="https://img.shields.io/badge/license-MIT-ff5a2c">
+  <a href="README.it.md">Italiano</a>
+</p>
+
+<p align="center">
+  <img alt="MIT license" src="https://img.shields.io/badge/license-MIT-ff5a2c">
   <img alt="Windows 10/11" src="https://img.shields.io/badge/platform-Windows%2010%2F11-0078d4">
   <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000">
   <img alt="Tauri 2" src="https://img.shields.io/badge/Tauri-2-24c8db">
@@ -16,46 +20,46 @@ App desktop per Windows: progresso episodi, voti, note, tag e scoperta di nuovi 
 </p>
 
 <p align="center">
-  <img src="docs/assets/home.webp" width="49%" alt="Home con consigliati e libreria">
-  <img src="docs/assets/detail.webp" width="49%" alt="Scheda anime con elenco episodi">
+  <img src="docs/assets/home.webp" width="49%" alt="Home with recommendations and library">
+  <img src="docs/assets/detail.webp" width="49%" alt="Anime detail with episode list">
   <br/>
-  <sub>Home con consigliati e libreria · scheda anime con episodi e stato</sub>
+  <sub>Home with recommendations and library · anime detail with episodes and status</sub>
 </p>
 
 <p align="center">
-  <img src="docs/assets/explore.webp" width="100%" alt="Esplora con filtri e tendenze della stagione">
+  <img src="docs/assets/explore.webp" width="100%" alt="Explore with filters and seasonal trends">
   <br/>
-  <sub>Esplora: filtri per tipo, stato, anno, episodi, studio, generi e voto minimo</sub>
+  <sub>Explore: filters by type, status, year, episodes, studio, genres and minimum score</sub>
 </p>
 
 <p align="center">
-  <img src="docs/assets/splash-crop.webp" width="55%" alt="Schermata di caricamento del catalogo al primo avvio">
+  <img src="docs/assets/splash-crop.webp" width="55%" alt="Catalog loading screen on first launch">
   <br/>
-  <sub>Primo avvio: il catalogo (~1200 titoli) viene scaricato una volta sola</sub>
+  <sub>First launch: the catalog (~1200 titles) is downloaded once</sub>
 </p>
 
-MIRU è un tracker anime locale. La UI è Next.js 16 (App Router, React 19, Tailwind v4, shadcn/base-ui), il guscio desktop è Tauri v2: una finestra nativa WebView2, nessun browser, nessun Node.js a runtime.
+MIRU is a local anime tracker. The UI is Next.js 16 (App Router, React 19, Tailwind v4, shadcn/base-ui); the desktop shell is Tauri v2 — a native WebView2 window, no browser, no Node.js at runtime. The interface is available in English and Italian, with the language picked from your system on first launch (change it in Settings → Language).
 
-## Funzioni
+## Features
 
-- **Libreria** con stati (da vedere, in corso, in pausa, completati, droppati), preferiti, voto personale, note e tag personalizzati.
-- **Progresso episodi** casella per casella, con "segna tutti" e paginazione per serie lunghe (One Piece docet).
-- **Registro attività** per ogni titolo: aggiunte, cambi stato, episodi visti, voti.
-- **Consigliati** calcolati dai generi che segui davvero, con "non mi interessa" per scremare.
-- **Esplora** con filtri (tipo, stato, anno, episodi, studio, generi, voto minimo) e ordinamenti.
-- **Ricerca** con aggiunta rapida alla libreria.
-- **Export / import** della libreria in JSON, con preferenze e storico.
-- **Interfaccia IT/EN**, tema scuro, layout fluido da 900 px in su (nessun overflow orizzontale, verificato a 900/1024/1280/1440/1920).
+- **Library** with statuses (plan to watch, watching, on hold, completed, dropped), favourites, personal score, notes and custom tags.
+- **Episode progress** checkbox by checkbox, with "mark all" and pagination for long series.
+- **Activity log** per title: additions, status changes, watched episodes, ratings.
+- **Recommendations** derived from the genres you actually follow, with "not interested" to filter them out.
+- **Explore** with filters (type, status, year, episodes, studio, genres, minimum score) and sorting.
+- **Search** with one-click add to the library.
+- **Export / import** of the library as JSON, preferences and history included.
+- **English / Italian UI**, dark theme, fluid layout from 900 px up (no horizontal overflow, verified at 900/1024/1280/1440/1920).
 
-## Requisiti
+## Requirements
 
-| Serve per | Cosa |
+| For | You need |
 |---|---|
-| Usare l'exe | Windows 10/11 e [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/) (preinstallato su Windows 11) |
-| Compilare l'exe | Node 20.9+, Rust stable (target `x86_64-pc-windows-msvc`) e Visual Studio Build Tools con workload "Desktop development with C++" |
-| Sviluppo web | Solo Node 20.9+ |
+| Running the exe | Windows 10/11 and the [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/) (preinstalled on Windows 11) |
+| Building the exe | Node 20.9+, Rust stable (`x86_64-pc-windows-msvc`) and Visual Studio Build Tools with the "Desktop development with C++" workload |
+| Web development | Node 20.9+ only |
 
-## Avvio rapido
+## Quick start
 
 ```bash
 git clone https://github.com/terzastella/miru.git
@@ -64,64 +68,64 @@ npm install
 npm run dev
 ```
 
-Apri `http://localhost:3000`.
+Open `http://localhost:3000`.
 
-## App desktop
+## Desktop app
 
 ```bash
-npm run desktop:dev        # finestra Tauri contro il dev server Next (hot reload)
+npm run desktop:dev        # Tauri window against the Next dev server (hot reload)
 npm run desktop:build      # exe in src-tauri/target/release
-npm run desktop:portable   # exe + copia in dist/MIRU.exe
+npm run desktop:portable   # exe + copy to dist/MIRU.exe
 ```
 
-`dist/MIRU.exe` è portabile: nessuna installazione, nessun Node.js, un solo file (~15 MB). Su Windows al primo avvio mostra una schermata di caricamento che scarica il catalogo locale (~1200 titoli da AniList, ~15 s, una volta sola); dagli avvii successivi ricerca, Esplora e Consigliati sono immediati.
+`dist/MIRU.exe` is portable: no installer, no Node.js, a single file (~15 MB). On Windows the first launch shows a loading screen that downloads the local catalog (~1200 titles from AniList, ~15 s, once); on later launches search, Explore and Recommendations are instant.
 
-`scripts/tauri.mjs` cerca `vcvars64.bat` e prepara l'ambiente MSVC prima di chiamare la CLI Tauri; se i Build Tools stanno in un percorso diverso, basta aggiungerlo all'elenco in cima al file.
+`scripts/tauri.mjs` looks for `vcvars64.bat` and prepares the MSVC environment before calling the Tauri CLI; if your Build Tools live elsewhere, add the path to the list at the top of that file.
 
-## Dati e privacy
+## Data and privacy
 
-Tutto è locale: nessun account, nessun backend, nessuna telemetria.
+Everything stays on your machine: no account, no backend, no telemetry.
 
-- libreria, preferenze e attività: `localStorage` della webview;
-- catalogo precaricato: IndexedDB (TTL 7 giorni);
-- posizione: `%LOCALAPPDATA%\app.miru.desktop` (spostando l'exe i dati restano lì).
+- library, preferences and activity: the webview's `localStorage`;
+- prefetched catalog: IndexedDB (7-day TTL);
+- location: `%LOCALAPPDATA%\app.miru.desktop` (moving the exe keeps your data).
 
-Le uniche richieste di rete sono verso [Jikan](https://jikan.moe/), [AniList](https://anilist.co/) e [Kitsu](https://kitsu.io/) per cercare anime e leggerne le schede.
+The only network requests go to [Jikan](https://jikan.moe/), [AniList](https://anilist.co/) and [Kitsu](https://kitsu.io/) to search anime and read their details.
 
-## Come è fatto
+## How it works
 
-- `MIRU_DESKTOP=1 next build` produce un export statico in `out/`, impacchettato nell'exe.
-- Le route API vivono in `app/api/**/route.handler.ts`: l'estensione `handler.ts` è abilitata solo nella build web (`pageExtensions` in `next.config.mjs`), così il build desktop non le include.
-- Nel desktop non c'è un server: `lib/anime-api.ts` risponde agli stessi path `/api/anime/*` eseguendo `lib/anime-sources.ts` dentro la webview e restituendo una `Response` equivalente — i componenti non sanno nulla della differenza.
-- Prima della rete viene consultato il catalogo locale (`lib/catalog.ts`), che applica gli stessi filtri e ordinamenti sui dati salvati.
-- Le chiamate alle API esterne escono dal processo Rust (`lib/net.ts` → `@tauri-apps/plugin-http`): nessun vincolo CORS. Gli host consentiti sono in `src-tauri/capabilities/default.json`.
-- La catena di fallback delle sorgenti è Jikan → AniList → Kitsu → cache in memoria, così un endpoint lento non spegne l'app.
+- `MIRU_DESKTOP=1 next build` produces a static export in `out/`, packaged into the exe.
+- API routes live in `app/api/**/route.handler.ts`: the `handler.ts` extension is enabled only in the web build (`pageExtensions` in `next.config.mjs`), so the desktop build leaves them out.
+- There is no server in the desktop app: `lib/anime-api.ts` answers the same `/api/anime/*` paths by running `lib/anime-sources.ts` inside the webview and returning an equivalent `Response` — components can't tell the difference.
+- The local catalog (`lib/catalog.ts`) is queried before the network and applies the same filters and sorting to stored data.
+- Calls to the external APIs leave from the Rust process (`lib/net.ts` → `@tauri-apps/plugin-http`): no CORS involved. Allowed hosts live in `src-tauri/capabilities/default.json`.
+- The source fallback chain is Jikan → AniList → Kitsu → in-memory cache, so one slow endpoint doesn't take the app down.
 
-## Struttura
+## Project structure
 
 ```
-app/               pagine App Router, layout, route API (solo web)
-components/        shell, card, dialoghi, viste e primitive UI (shadcn/base-ui)
-lib/               store locale, i18n, sorgenti anime, catalogo, adapter desktop
-public/            asset statici
-scripts/           build desktop, wrapper MSVC per Tauri, verifica layout
-src-tauri/         guscio Tauri: conf, capability, icone, codice Rust
-tools/             generazione icona, vecchio launcher (non usato dall'exe)
-docs/              documentazione e screenshot
+app/               App Router pages, layout, API routes (web only)
+components/        shell, cards, dialogs, views and UI primitives (shadcn/base-ui)
+lib/               local store, i18n, anime sources, catalog, desktop adapter
+public/            static assets
+scripts/           desktop build, MSVC wrapper for Tauri, layout check
+src-tauri/         Tauri shell: conf, capabilities, icons, Rust code
+tools/             icon generation, legacy launcher (unused by the exe)
+docs/              documentation and screenshots
 ```
 
-## Limiti noti
+## Known limits
 
-- L'app desktop è **solo Windows** (WebView2). La versione web gira ovunque.
-- Il catalogo precaricato sono i ~1200 titoli più popolari e più votati, non l'intero database AniList: una ricerca di nicchia esce in rete.
-- Se Jikan non risponde (rate limit o rete che lo blocca) il primo tentativo costa ~7 s prima del fallback AniList.
-- CSP disattivata (`csp: null` in `tauri.conf.json`): da irrigidire quando il set di host esterni sarà stabile.
-- Nessun backend, nessuna autenticazione, nessuna sincronizzazione tra dispositivi: i dati stanno su una macchina sola.
+- The desktop app is **Windows only** (WebView2). The web version runs anywhere.
+- The prefetched catalog is the ~1200 most popular and top-rated titles, not the whole AniList database: niche searches go to the network.
+- If Jikan doesn't answer (rate limit or a network that blocks it) the first attempt costs ~7 s before falling back to AniList.
+- CSP is disabled (`csp: null` in `tauri.conf.json`): worth tightening once the set of external hosts is stable.
+- No backend, no authentication, no cross-device sync: your data lives on one machine.
 
-## Licenza
+## License
 
 [MIT](LICENSE) © 2026 Terzastella
 
-## Crediti
+## Credits
 
-Dati e immagini appartengono alle rispettive fonti: [Jikan](https://jikan.moe/) (MyAnimeList), [AniList](https://anilist.co/), [Kitsu](https://kitsu.io/). UI costruita con [shadcn/ui](https://ui.shadcn.com/), [Base UI](https://base-ui.com/), [Lucide](https://lucide.dev/) e i font Bebas Neue, Inter e JetBrains Mono di Google Fonts. Scaffold iniziale generato con [v0](https://v0.app).
+Data and images belong to their respective sources: [Jikan](https://jikan.moe/) (MyAnimeList), [AniList](https://anilist.co/), [Kitsu](https://kitsu.io/). UI built with [shadcn/ui](https://ui.shadcn.com/), [Base UI](https://base-ui.com/), [Lucide](https://lucide.dev/) and the Bebas Neue, Inter and JetBrains Mono fonts from Google Fonts. Initial scaffold generated with [v0](https://v0.app).

@@ -19,3 +19,5 @@ src-tauri/target/
 MIRU.exe
 dev-server.log
 *.tsbuildinfo
+
+.serena/
