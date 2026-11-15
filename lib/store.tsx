@@ -22,7 +22,7 @@ import {
   type Preferences,
   progressOf,
 } from './types'
-import { localISODate, mergeLibraryState, uid } from './library-merge'
+import { localISODate, mergeLibraryState, parsePersistedState, uid } from './library-merge'
 
 /**
  * Guest (local) persistence adapter.
@@ -74,13 +74,10 @@ const localAdapter = {
           preferences: { ...defaultPreferences, locale: detectLocale() },
         }
       }
-      const parsed = JSON.parse(raw) as Partial<PersistedState>
-      return {
-        entries: parsed.entries ?? [],
-        activity: parsed.activity ?? [],
-        preferences: { ...defaultPreferences, ...(parsed.preferences ?? {}) },
-        dismissedRecommendations: parsed.dismissedRecommendations ?? [],
-      }
+      // validazione di struttura: JSON valido ma con tipi sbagliati non passa
+      const parsed = parsePersistedState(raw)
+      if (!parsed) throw new Error('invalid state shape')
+      return parsed
     } catch (error) {
       // dati illeggibili: mettiamo da parte il blob prima di ripartire pulito,
       // così un guasto non distrugge definitivamente la libreria

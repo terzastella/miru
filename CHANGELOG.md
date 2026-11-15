@@ -5,6 +5,18 @@ versioning [SemVer](https://semver.org/lang/it/).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-15
+
+### Added
+
+- Validazione runtime dei dati locali e dei backup importati (`lib/library-merge.ts`):
+  JSON valido ma con tipi sbagliati viene normalizzato campo per campo, la struttura
+  inutilizzabile viene rifiutata e messa in quarantena invece di sovrascritta.
+- Test dedicati al fuso `Europe/Rome` (mezzanotte e mezza locale contro UTC) e a
+  stati/backup malformati.
+- Job CI `windows-latest` che compila l'eseguibile Tauri su tag e su richiesta manuale,
+  calcola lo SHA-256 e carica l'artefatto.
+
 ## [0.1.0] - 2026-11-15
 
 ### Added

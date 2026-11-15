@@ -3,23 +3,37 @@
 // ma il linker non è nel PATH, quindi prepariamo l'ambiente come farebbe
 // "Developer PowerShell for VS".
 import { spawnSync } from 'node:child_process'
-import { existsSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs'
+import { existsSync, mkdtempSync, readdirSync, writeFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
+// GitHub Actions mette Visual Studio in Enterprise; in locale capita BuildTools
+// o Community. Invece di elencare i percorsi, scandiamo le installazioni presenti.
 const VS_ROOTS = [
-  'C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools',
-  'C:/Program Files/Microsoft Visual Studio/2022/BuildTools',
-  'C:/Program Files (x86)/Microsoft Visual Studio/2022/Community',
-  'C:/Program Files/Microsoft Visual Studio/2022/Community',
-  'C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools',
-  'C:/Program Files/Microsoft Visual Studio/18/BuildTools',
+  'C:/Program Files/Microsoft Visual Studio',
+  'C:/Program Files (x86)/Microsoft Visual Studio',
 ]
 
 function findVcvars() {
   for (const root of VS_ROOTS) {
-    const candidate = join(root, 'VC/Auxiliary/Build/vcvars64.bat')
-    if (existsSync(candidate)) return candidate
+    let years = []
+    try {
+      years = readdirSync(root)
+    } catch {
+      continue
+    }
+    for (const year of years) {
+      let editions = []
+      try {
+        editions = readdirSync(join(root, year))
+      } catch {
+        continue
+      }
+      for (const edition of editions) {
+        const candidate = join(root, year, edition, 'VC/Auxiliary/Build/vcvars64.bat')
+        if (existsSync(candidate)) return candidate
+      }
+    }
   }
   return null
 }

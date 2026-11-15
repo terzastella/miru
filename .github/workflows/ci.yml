@@ -35,9 +35,40 @@ jobs:
       - name: Build web (route API incluse)
         run: npm run build
 
+      # Il build Rust/Tauri richiede windows-latest + MSVC (~5-8 min), quindi gira
+      # solo sui tag e su richiesta manuale: sulle push normali resta la CI veloce.
       - name: Build export statico per il desktop
         run: npm run build:desktop
 
-      # Il build Rust/Tauri non è qui: richiede windows-latest + MSVC (~5-8 min)
-      # e il binario prodotto non è distribuibile senza firma. Si compila in locale
-      # con `npm run desktop:portable`.
+  windows-build:
+    name: Build Windows (Tauri)
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Installa le dipendenze (lockfile)
+        run: npm ci
+
+      - name: Compila l'eseguibile portabile
+        run: npm run desktop:portable
+
+      - name: Calcola l'hash
+        shell: pwsh
+        run: (Get-FileHash dist\MIRU.exe -Algorithm SHA256).Hash | Tee-Object -FilePath dist\SHA256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: miru-windows-exe
+          path: |
+            dist/MIRU.exe
+            dist/SHA256.txt
+          if-no-files-found: error

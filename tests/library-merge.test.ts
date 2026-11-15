@@ -1,10 +1,14 @@
 import assert from 'node:assert/strict'
+import { execFileSync } from 'node:child_process'
+import { createRequire } from 'node:module'
 import test from 'node:test'
 
 import {
   ACTIVITY_LIMIT,
   localISODate,
   mergeLibraryState,
+  parsePersistedState,
+  sanitizeExport,
   type PersistedShape,
 } from '../lib/library-merge'
 import type { ActivityRecord, Anime, LibraryEntry, MiruExport } from '../lib/types'
@@ -202,4 +206,77 @@ test('localISODate usa il calendario locale, non UTC', () => {
   const moment = new Date('2026-01-01T00:30:00Z')
   const local = moment.toLocaleDateString('sv-SE') // YYYY-MM-DD nel fuso locale
   assert.equal(localISODate(moment), local)
+})
+
+test('a Roma, mezzanotte e mezza locale resta il giorno giusto (UTC sbaglierebbe)', () => {
+  const require = createRequire(import.meta.url)
+  const tsxCli = require.resolve('tsx/cli')
+  const out = execFileSync(
+    process.execPath,
+    [tsxCli, 'tests/helpers/local-date-probe.ts'],
+    {
+      env: { ...process.env, TZ: 'Europe/Rome' },
+      encoding: 'utf8',
+    },
+  ).trim()
+
+  assert.equal(out, '2026-01-01 2025-12-31')
+})
+
+test('uno stato locale con struttura sbagliata viene rifiutato', () => {
+  assert.equal(parsePersistedState('{"entries":"nope","activity":[]}'), null)
+  assert.equal(parsePersistedState('{"entries":[],"activity":{}}'), null)
+  assert.equal(parsePersistedState('{'), null)
+  assert.equal(parsePersistedState('null'), null)
+})
+
+test('uno stato locale valido ma con voci rotte scarta solo quelle', () => {
+  const raw = JSON.stringify({
+    entries: [
+      entry('anilist:1'),
+      { animeId: 'anilist:2' }, // manca anime
+      ['non', 'un', 'record'],
+    ],
+    activity: [
+      { id: 'a1', animeTitle: 'Anime', createdAt: '2026-01-01T00:00:00.000Z', action: 'added' },
+      { id: 'a2' }, // manca createdAt
+    ],
+    preferences: { locale: 'en', libraryView: 'list' },
+    dismissedRecommendations: ['x', 3],
+  })
+
+  const parsed = parsePersistedState(raw)
+  assert.ok(parsed)
+  assert.equal(parsed.entries.length, 1)
+  assert.equal(parsed.entries[0].animeId, 'anilist:1')
+  assert.equal(parsed.activity.length, 1)
+  assert.deepEqual(parsed.dismissedRecommendations, ['x'])
+  assert.equal(parsed.preferences.locale, 'en')
+  assert.equal(parsed.preferences.libraryView, 'list')
+})
+
+test('un backup con tipi sbagliati viene normalizzato, non fidato', () => {
+  const payload = {
+    entries: [
+      { ...entry('anilist:1'), watchedEpisodes: ['2', 3, null], customTags: 'x' },
+      { nope: true },
+    ],
+    activity: 'not-an-array',
+    preferences: { locale: 'zz', libraryView: 'weird' },
+  }
+
+  const safe = sanitizeExport(payload)
+  assert.ok(safe)
+  assert.equal(safe.entries.length, 1)
+  assert.deepEqual(safe.entries[0].watchedEpisodes, [3])
+  assert.deepEqual(safe.entries[0].customTags, [])
+  assert.deepEqual(safe.activity, [])
+  assert.equal(safe.preferences.locale, 'it')
+  assert.equal(safe.preferences.libraryView, 'grid')
+})
+
+test('un backup che non è un oggetto viene rifiutato dal merge', () => {
+  const { state, imported } = mergeLibraryState(baseState(), 'nope' as never)
+  assert.equal(imported, 0)
+  assert.equal(state.entries.length, 0)
 })

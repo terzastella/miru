@@ -1,10 +1,13 @@
 /**
- * Logica pura di stato: merge degli import e date locali.
+ * Logica pura di stato: validazione, merge degli import e date locali.
  * Vive fuori da `store.tsx` per poter essere testata senza React.
  */
 import type {
+  ActivityAction,
   ActivityRecord,
+  Anime,
   LibraryEntry,
+  LibraryStatus,
   MiruExport,
   Preferences,
 } from './types'
@@ -16,6 +19,209 @@ export type PersistedShape = {
   activity: ActivityRecord[]
   preferences: Preferences
   dismissedRecommendations: string[]
+}
+
+export const DEFAULT_PREFERENCES: Preferences = {
+  locale: 'it',
+  libraryView: 'grid',
+  librarySort: 'updated_desc',
+  displayName: '',
+}
+
+/* ------------------------------------------------------------ validazione */
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function asString(value: unknown, fallback: string | null = null) {
+  return typeof value === 'string' ? value : fallback
+}
+
+function asNumber(value: unknown, fallback: number | null = null) {
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback
+}
+
+function asNumberArray(value: unknown): number[] {
+  if (!Array.isArray(value)) return []
+  return [...new Set(value.filter((n): n is number => typeof n === 'number' && Number.isFinite(n)))].sort(
+    (a, b) => a - b,
+  )
+}
+
+function asStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return []
+  return value.filter((s): s is string => typeof s === 'string')
+}
+
+const LIBRARY_STATUSES: LibraryStatus[] = [
+  'plan',
+  'watching',
+  'onhold',
+  'dropped',
+  'done',
+]
+
+const ACTIVITY_ACTIONS: ActivityAction[] = [
+  'added',
+  'status_changed',
+  'episode_watched',
+  'episode_unwatched',
+  'rated',
+  'removed',
+  'favorited',
+  'unfavorited',
+  'rewatched',
+  'notes_updated',
+  'tags_updated',
+]
+
+/** Ricostruisce un `Anime` valido: i campi mancanti o sbagliati diventano default. */
+function sanitizeAnime(value: unknown): Anime | null {
+  if (!isRecord(value)) return null
+  const id = asString(value.id)
+  const title = asString(value.title)
+  if (!id || !title) return null
+
+  return {
+    id,
+    malId: asNumber(value.malId),
+    anilistId: asNumber(value.anilistId),
+    kitsuId: asNumber(value.kitsuId),
+    title,
+    titleEnglish: asString(value.titleEnglish),
+    titleJapanese: asString(value.titleJapanese),
+    synopsis: asString(value.synopsis),
+    imageUrl: asString(value.imageUrl),
+    bannerUrl: asString(value.bannerUrl),
+    type: (asString(value.type) as Anime['type']) ?? null,
+    episodesTotal: asNumber(value.episodesTotal),
+    durationMinutes: asNumber(value.durationMinutes),
+    score: asNumber(value.score),
+    year: asNumber(value.year),
+    season: (asString(value.season) as Anime['season']) ?? null,
+    airingStatus: (asString(value.airingStatus) as Anime['airingStatus']) ?? null,
+    nextEpisodeAt: asString(value.nextEpisodeAt),
+    genres: asStringArray(value.genres),
+    studios: asStringArray(value.studios),
+    source: (asString(value.source) as Anime['source']) ?? 'cache',
+  }
+}
+
+/** Una voce di libreria valida, o `null` se inutilizzabile. */
+export function sanitizeEntry(value: unknown): LibraryEntry | null {
+  if (!isRecord(value)) return null
+  const animeId = asString(value.animeId)
+  const anime = sanitizeAnime(value.anime)
+  if (!animeId || !anime) return null
+
+  const status = asString(value.status) as LibraryStatus | null
+  const now = new Date().toISOString()
+
+  return {
+    id: asString(value.id) || uid(),
+    animeId,
+    anime,
+    status: status && LIBRARY_STATUSES.includes(status) ? status : 'plan',
+    isFavorite: value.isFavorite === true,
+    userScore: asNumber(value.userScore),
+    watchedEpisodes: asNumberArray(value.watchedEpisodes),
+    rewatchCount: Math.max(0, asNumber(value.rewatchCount, 0) ?? 0),
+    notes: asString(value.notes, '') ?? '',
+    customTags: asStringArray(value.customTags),
+    startedAt: asString(value.startedAt),
+    finishedAt: asString(value.finishedAt),
+    addedAt: asString(value.addedAt) ?? now,
+    updatedAt: asString(value.updatedAt) ?? now,
+    clientVersion: asNumber(value.clientVersion, 1) ?? 1,
+    deletedAt: asString(value.deletedAt),
+  }
+}
+
+/** Un record di attività valido, o `null`. */
+export function sanitizeActivity(value: unknown): ActivityRecord | null {
+  if (!isRecord(value)) return null
+  const id = asString(value.id)
+  const animeTitle = asString(value.animeTitle)
+  const createdAt = asString(value.createdAt)
+  if (!id || !animeTitle || !createdAt) return null
+
+  const action = asString(value.action) as ActivityAction | null
+
+  return {
+    id,
+    entryId: asString(value.entryId),
+    animeTitle,
+    action: action && ACTIVITY_ACTIONS.includes(action) ? action : 'added',
+    metadata: isRecord(value.metadata)
+      ? (value.metadata as Record<string, string | number | null>)
+      : undefined,
+    createdAt,
+  }
+}
+
+export function sanitizePreferences(value: unknown): Preferences {
+  if (!isRecord(value)) return DEFAULT_PREFERENCES
+  const locale = asString(value.locale) === 'en' ? 'en' : 'it'
+  const libraryView = asString(value.libraryView) === 'list' ? 'list' : 'grid'
+  const librarySort = asString(value.librarySort) ?? DEFAULT_PREFERENCES.librarySort
+  return {
+    locale,
+    libraryView,
+    librarySort: librarySort as Preferences['librarySort'],
+    displayName: asString(value.displayName, '') ?? '',
+  }
+}
+
+/**
+ * Interpreta il contenuto di `localStorage`.
+ * Restituisce `null` quando la struttura è inutilizzabile: il chiamante deve
+ * mettere il blob in quarantena invece di sovrascriverlo con uno stato vuoto.
+ */
+export function parsePersistedState(raw: string): PersistedShape | null {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(raw)
+  } catch {
+    return null
+  }
+  if (!isRecord(parsed)) return null
+  if (!Array.isArray(parsed.entries) || !Array.isArray(parsed.activity)) return null
+
+  return {
+    entries: parsed.entries
+      .map(sanitizeEntry)
+      .filter((entry): entry is LibraryEntry => entry !== null),
+    activity: parsed.activity
+      .map(sanitizeActivity)
+      .filter((record): record is ActivityRecord => record !== null)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+      .slice(0, ACTIVITY_LIMIT),
+    preferences: sanitizePreferences(parsed.preferences),
+    dismissedRecommendations: asStringArray(parsed.dismissedRecommendations),
+  }
+}
+
+/** Normalizza un backup importato prima del merge. */
+export function sanitizeExport(payload: unknown): MiruExport | null {
+  if (!isRecord(payload)) return null
+  if (payload.entries !== undefined && !Array.isArray(payload.entries)) return null
+
+  return {
+    schemaVersion: 1,
+    exportedAt: asString(payload.exportedAt) ?? new Date().toISOString(),
+    preferences: sanitizePreferences(payload.preferences),
+    entries: Array.isArray(payload.entries)
+      ? payload.entries
+          .map(sanitizeEntry)
+          .filter((entry): entry is LibraryEntry => entry !== null)
+      : [],
+    activity: Array.isArray(payload.activity)
+      ? payload.activity
+          .map(sanitizeActivity)
+          .filter((record): record is ActivityRecord => record !== null)
+      : [],
+  }
 }
 
 export function uid(): string {
@@ -42,10 +248,13 @@ export function mergeLibraryState(
   prev: PersistedShape,
   payload: MiruExport,
 ): { state: PersistedShape; imported: number } {
+  const safe = sanitizeExport(payload)
+  if (!safe) return { state: prev, imported: 0 }
+
   let imported = 0
   const byAnime = new Map(prev.entries.map((entry) => [entry.animeId, entry]))
 
-  for (const incoming of payload.entries ?? []) {
+  for (const incoming of safe.entries) {
     if (!incoming?.animeId || !incoming.anime) continue
     const existing = byAnime.get(incoming.animeId)
     imported += 1
@@ -75,8 +284,7 @@ export function mergeLibraryState(
   }
 
   const activityById = new Map(prev.activity.map((record) => [record.id, record]))
-  for (const record of payload.activity ?? []) {
-    if (!record?.id || !record.animeTitle) continue
+  for (const record of safe.activity) {
     if (!activityById.has(record.id)) activityById.set(record.id, record)
   }
 
@@ -89,7 +297,7 @@ export function mergeLibraryState(
       ...prev,
       entries: [...byAnime.values()],
       activity,
-      preferences: { ...prev.preferences, ...(payload.preferences ?? {}) },
+      preferences: { ...prev.preferences, ...safe.preferences },
     },
     imported,
   }
