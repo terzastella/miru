@@ -5,12 +5,17 @@
 import type {
   ActivityAction,
   ActivityRecord,
+  AiringStatus,
   Anime,
+  AnimeType,
   LibraryEntry,
   LibraryStatus,
   MiruExport,
   Preferences,
+  Season,
+  SourceName,
 } from './types'
+import { LIBRARY_SORTS } from './types'
 
 export const ACTIVITY_LIMIT = 300
 
@@ -62,6 +67,22 @@ const LIBRARY_STATUSES: LibraryStatus[] = [
   'done',
 ]
 
+const ANIME_TYPES: AnimeType[] = ['TV', 'Movie', 'OVA', 'ONA', 'Special', 'Music']
+const SEASONS: Season[] = ['winter', 'spring', 'summer', 'fall']
+const AIRING_STATUSES: AiringStatus[] = ['airing', 'complete', 'upcoming']
+const SOURCES: SourceName[] = ['jikan', 'anilist', 'kitsu', 'cache']
+
+/** Valore di un enum whitelisted, oppure il fallback se sconosciuto. */
+function asEnum<T extends string>(
+  value: unknown,
+  allowed: readonly T[],
+  fallback: T | null,
+): T | null {
+  return typeof value === 'string' && (allowed as readonly string[]).includes(value)
+    ? (value as T)
+    : fallback
+}
+
 const ACTIVITY_ACTIONS: ActivityAction[] = [
   'added',
   'status_changed',
@@ -94,17 +115,17 @@ function sanitizeAnime(value: unknown): Anime | null {
     synopsis: asString(value.synopsis),
     imageUrl: asString(value.imageUrl),
     bannerUrl: asString(value.bannerUrl),
-    type: (asString(value.type) as Anime['type']) ?? null,
+    type: asEnum(value.type, ANIME_TYPES, null),
     episodesTotal: asNumber(value.episodesTotal),
     durationMinutes: asNumber(value.durationMinutes),
     score: asNumber(value.score),
     year: asNumber(value.year),
-    season: (asString(value.season) as Anime['season']) ?? null,
-    airingStatus: (asString(value.airingStatus) as Anime['airingStatus']) ?? null,
+    season: asEnum(value.season, SEASONS, null),
+    airingStatus: asEnum(value.airingStatus, AIRING_STATUSES, null),
     nextEpisodeAt: asString(value.nextEpisodeAt),
     genres: asStringArray(value.genres),
     studios: asStringArray(value.studios),
-    source: (asString(value.source) as Anime['source']) ?? 'cache',
+    source: asEnum(value.source, SOURCES, 'cache') ?? 'cache',
   }
 }
 
@@ -164,21 +185,29 @@ export function sanitizePreferences(value: unknown): Preferences {
   if (!isRecord(value)) return DEFAULT_PREFERENCES
   const locale = asString(value.locale) === 'en' ? 'en' : 'it'
   const libraryView = asString(value.libraryView) === 'list' ? 'list' : 'grid'
-  const librarySort = asString(value.librarySort) ?? DEFAULT_PREFERENCES.librarySort
   return {
     locale,
     libraryView,
-    librarySort: librarySort as Preferences['librarySort'],
+    librarySort: asEnum(
+      value.librarySort,
+      LIBRARY_SORTS,
+      DEFAULT_PREFERENCES.librarySort,
+    ) as Preferences['librarySort'],
     displayName: asString(value.displayName, '') ?? '',
   }
 }
 
 /**
  * Interpreta il contenuto di `localStorage`.
- * Restituisce `null` quando la struttura è inutilizzabile: il chiamante deve
- * mettere il blob in quarantena invece di sovrascriverlo con uno stato vuoto.
+ *
+ * Restituisce `null` quando la struttura è inutilizzabile (il chiamante deve mettere
+ * il blob in quarantena). Quando la struttura è valida ma alcuni record sono
+ * irrecuperabili, restituisce i record buoni e il numero di quelli scartati, così
+ * il chiamante può conservare l'originale e avvisare l'utente.
  */
-export function parsePersistedState(raw: string): PersistedShape | null {
+export function parsePersistedState(
+  raw: string,
+): { state: PersistedShape; dropped: number } | null {
   let parsed: unknown
   try {
     parsed = JSON.parse(raw)
@@ -188,17 +217,26 @@ export function parsePersistedState(raw: string): PersistedShape | null {
   if (!isRecord(parsed)) return null
   if (!Array.isArray(parsed.entries) || !Array.isArray(parsed.activity)) return null
 
+  const entries = parsed.entries
+    .map(sanitizeEntry)
+    .filter((entry): entry is LibraryEntry => entry !== null)
+  const activity = parsed.activity
+    .map(sanitizeActivity)
+    .filter((record): record is ActivityRecord => record !== null)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .slice(0, ACTIVITY_LIMIT)
+
+  const dropped =
+    parsed.entries.length - entries.length + (parsed.activity.length - activity.length)
+
   return {
-    entries: parsed.entries
-      .map(sanitizeEntry)
-      .filter((entry): entry is LibraryEntry => entry !== null),
-    activity: parsed.activity
-      .map(sanitizeActivity)
-      .filter((record): record is ActivityRecord => record !== null)
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-      .slice(0, ACTIVITY_LIMIT),
-    preferences: sanitizePreferences(parsed.preferences),
-    dismissedRecommendations: asStringArray(parsed.dismissedRecommendations),
+    state: {
+      entries,
+      activity,
+      preferences: sanitizePreferences(parsed.preferences),
+      dismissedRecommendations: asStringArray(parsed.dismissedRecommendations),
+    },
+    dropped: Math.max(0, dropped),
   }
 }
 

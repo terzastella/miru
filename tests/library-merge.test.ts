@@ -278,12 +278,57 @@ test('uno stato locale valido ma con voci rotte scarta solo quelle', () => {
 
   const parsed = parsePersistedState(raw)
   assert.ok(parsed)
-  assert.equal(parsed.entries.length, 1)
-  assert.equal(parsed.entries[0].animeId, 'anilist:1')
-  assert.equal(parsed.activity.length, 1)
-  assert.deepEqual(parsed.dismissedRecommendations, ['x'])
-  assert.equal(parsed.preferences.locale, 'en')
-  assert.equal(parsed.preferences.libraryView, 'list')
+  assert.equal(parsed.state.entries.length, 1)
+  assert.equal(parsed.state.entries[0].animeId, 'anilist:1')
+  assert.equal(parsed.state.activity.length, 1)
+  assert.deepEqual(parsed.state.dismissedRecommendations, ['x'])
+  assert.equal(parsed.state.preferences.locale, 'en')
+  assert.equal(parsed.state.preferences.libraryView, 'list')
+  // 2 voci + 1 attività scartate
+  assert.equal(parsed.dropped, 3)
+})
+
+test('uno stato locale pulito non segnala elementi scartati', () => {
+  const raw = JSON.stringify({
+    entries: [entry('anilist:1')],
+    activity: [
+      { id: 'a1', animeTitle: 'Anime', createdAt: '2026-01-01T00:00:00.000Z', action: 'added' },
+    ],
+    preferences: { locale: 'it' },
+  })
+
+  const parsed = parsePersistedState(raw)
+  assert.ok(parsed)
+  assert.equal(parsed.dropped, 0)
+})
+
+test('gli enum sconosciuti tornano ai valori di default', () => {
+  const raw = JSON.stringify({
+    entries: [
+      {
+        ...entry('anilist:1'),
+        anime: {
+          ...entry('anilist:1').anime,
+          type: 'DOCUMENTARY',
+          season: 'monsoon',
+          airingStatus: 'unknown',
+          source: 'mal',
+        },
+      },
+    ],
+    activity: [],
+    preferences: { librarySort: 'chaos', libraryView: 'carousel' },
+  })
+
+  const parsed = parsePersistedState(raw)
+  assert.ok(parsed)
+  const anime = parsed.state.entries[0].anime
+  assert.equal(anime.type, null)
+  assert.equal(anime.season, null)
+  assert.equal(anime.airingStatus, null)
+  assert.equal(anime.source, 'cache')
+  assert.equal(parsed.state.preferences.librarySort, 'updated_desc')
+  assert.equal(parsed.state.preferences.libraryView, 'grid')
 })
 
 test('un backup con tipi sbagliati viene normalizzato, non fidato', () => {

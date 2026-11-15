@@ -5,6 +5,20 @@ versioning [SemVer](https://semver.org/lang/it/).
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-11-15
+
+### Added
+
+- Avviso con il numero di elementi scartati quando un salvataggio parzialmente
+  corrotto viene recuperato in parte; l'originale viene conservato in
+  `miru.state.v1.recovered.<timestamp>` prima di riscrivere lo stato.
+
+### Fixed
+
+- I valori di enum sconosciuti (`librarySort`, `type`, `season`, `airingStatus`,
+  `source`, `libraryView`) tornano al default invece di essere accettati per cast:
+  un dato manipolato non può più rompere ordinamenti o etichette.
+
 ## [0.1.2] - 2026-11-15
 
 ### Fixed

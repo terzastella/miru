@@ -217,6 +217,8 @@ const it = {
   'common.error': 'Qualcosa è andato storto.',
   'storage.saveFailed':
     'Impossibile salvare sul dispositivo: controlla lo spazio disponibile.',
+  'storage.recovered':
+    'Alcuni elementi non erano leggibili: {count} scartati. Una copia dei dati originali è stata conservata.',
   'common.of': 'di',
 
   'a11y.skipToContent': 'Salta al contenuto',
@@ -436,6 +438,8 @@ const en: Record<keyof typeof it, string> = {
   'common.error': 'Something went wrong.',
   'storage.saveFailed':
     "Couldn't save to this device: check the available space.",
+  'storage.recovered':
+    'Some items were unreadable: {count} discarded. A copy of the original data was kept.',
   'common.of': 'of',
 
   'a11y.skipToContent': 'Skip to content',

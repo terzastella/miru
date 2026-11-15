@@ -66,11 +66,22 @@ const emptyState: PersistedState = {
   dismissedRecommendations: [],
 }
 
+/** Conserva una copia del blob originale prima di sovrascriverlo. */
+function quarantine(raw: string | null, kind: 'corrupted' | 'recovered') {
+  if (!raw || typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(`${STORAGE_KEY}.${kind}.${Date.now()}`, raw)
+  } catch {
+    /* spazio esaurito: niente copia, si prosegue */
+  }
+}
+
 const localAdapter = {
   read(): PersistedState {
     if (typeof window === 'undefined') return emptyState
+    let raw: string | null = null
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY)
+      raw = window.localStorage.getItem(STORAGE_KEY)
       // primo avvio: nessuna preferenza salvata, scegliamo la lingua dal sistema
       if (!raw) {
         return {
@@ -81,21 +92,22 @@ const localAdapter = {
       // validazione di struttura: JSON valido ma con tipi sbagliati non passa
       const parsed = parsePersistedState(raw)
       if (!parsed) throw new Error('invalid state shape')
-      return parsed
+
+      // struttura valida ma con record irrecuperabili: recuperiamo i buoni,
+      // conserviamo l'originale e diciamo quanti elementi sono stati esclusi
+      if (parsed.dropped > 0) {
+        const locale = parsed.state.preferences.locale
+        quarantine(raw, 'recovered')
+        toast.warning(
+          translate(locale, 'storage.recovered', { count: parsed.dropped }),
+        )
+      }
+
+      return parsed.state
     } catch (error) {
       // dati illeggibili: mettiamo da parte il blob prima di ripartire pulito,
       // così un guasto non distrugge definitivamente la libreria
-      try {
-        const raw = window.localStorage.getItem(STORAGE_KEY)
-        if (raw) {
-          window.localStorage.setItem(
-            `${STORAGE_KEY}.corrupted.${Date.now()}`,
-            raw,
-          )
-        }
-      } catch {
-        /* spazio esaurito: niente quarantena, si prosegue */
-      }
+      quarantine(raw, 'corrupted')
       console.log('[miru] state unreadable, quarantined', (error as Error).message)
       return {
         ...emptyState,
