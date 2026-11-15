@@ -12,7 +12,15 @@ a runtime. Aggiornato 15/11/2026: icona, layout fluido, catalogo precaricato.
 - Layout: nessun overflow orizzontale da 900 a 1920 px; dettaglio a 1024 dentro il viewport
   (`node scripts/check-layout.mjs` con `npm start` attivo).
 - Scrollbar: thumb scuro arrotondato senza frecce (globals.css), niente barra nativa.
+- Persistenza: aggiunto un titolo, chiuso e riaperto l'exe → libreria intatta.
+- README.md (IT, logo + screenshot in `docs/assets/*.webp`) e LICENSE MIT.
 - `tsc --noEmit` = 0. Web build invariata (`/api/anime/*` attive).
+
+## Bug corretto (importante)
+`MiruProvider` idratava lo stato e sbloccava il salvataggio nella stessa commit: l'effetto
+di write partiva con lo stato vuoto iniziale e poteva azzerare `localStorage` (perso un
+test durante gli screenshot). Ora il write è guardato da `ready` (`lib/store.tsx`).
+
 
 ## Architettura in breve
 - Build statica Next (`MIRU_DESKTOP=1`), route API escluse via `pageExtensions`
