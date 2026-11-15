@@ -161,13 +161,26 @@ export async function buildCatalog(
 
 /* --------------------------------------------------------------- query */
 
+/** Normalizzazione per la ricerca locale: minuscole, senza accenti né punteggiatura. */
+export function normalizeText(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 function haystack(anime: Anime) {
-  return `${anime.title} ${anime.titleEnglish ?? ''} ${anime.titleJapanese ?? ''}`.toLowerCase()
+  return normalizeText(
+    `${anime.title} ${anime.titleEnglish ?? ''} ${anime.titleJapanese ?? ''}`,
+  )
 }
 
 /** Stessa forma di `searchAnime`, ma sui dati locali. */
 export function queryCatalog(catalog: Catalog, query: SearchQuery): SearchResult {
-  const needle = query.q?.trim().toLowerCase()
+  const needle = query.q ? normalizeText(query.q) : ''
   const base = needle
     ? catalog.items.filter((anime) => haystack(anime).includes(needle))
     : catalog.items.slice()

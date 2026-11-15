@@ -13,7 +13,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+
 } from '@/components/ui/select'
 import { LOCALES, LOCALE_LABELS, useI18n, type Locale } from '@/lib/i18n'
 import { useMiru } from '@/lib/store'
@@ -185,7 +185,9 @@ export function SettingsView() {
               }
             >
               <SelectTrigger id="language" className="mt-1.5 w-full">
-                <SelectValue />
+                <span className="flex-1 text-left">
+                  {LOCALE_LABELS[preferences.locale as Locale]}
+                </span>
               </SelectTrigger>
               <SelectContent>
                 {LOCALES.map((locale) => (
@@ -206,7 +208,15 @@ export function SettingsView() {
               onValueChange={(value) => setTheme(value ?? 'dark')}
             >
               <SelectTrigger id="theme" className="mt-1.5 w-full">
-                <SelectValue />
+                <span className="flex-1 text-left">
+                  {t(
+                    theme === 'light'
+                      ? 'settings.themeLight'
+                      : theme === 'system'
+                        ? 'settings.themeSystem'
+                        : 'settings.themeDark',
+                  )}
+                </span>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="dark">{t('settings.themeDark')}</SelectItem>

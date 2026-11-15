@@ -580,6 +580,7 @@ function EditorPanel({
               <Input
                 id="started-at"
                 type="date"
+                lang={locale}
                 value={entry.startedAt ?? ''}
                 onChange={(event) =>
                   onDatesChange({
@@ -614,6 +615,7 @@ function EditorPanel({
               <Input
                 id="finished-at"
                 type="date"
+                lang={locale}
                 value={entry.finishedAt ?? ''}
                 onChange={(event) =>
                   onDatesChange({
