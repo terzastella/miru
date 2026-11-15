@@ -6,7 +6,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react'
 
@@ -164,18 +163,19 @@ export function MiruProvider({ children }: { children: React.ReactNode }) {
   const [detailId, setDetailId] = useState<string | null>(null)
   const [detailSeed, setDetailSeed] = useState<Anime | null>(null)
   const [addOpen, setAddOpen] = useState(false)
-  const hydrated = useRef(false)
 
   useEffect(() => {
+    // idratazione: leggiamo localStorage prima di qualsiasi scrittura
     setState(localAdapter.read())
-    hydrated.current = true
     setReady(true)
   }, [])
 
   useEffect(() => {
-    if (!hydrated.current) return
+    // senza il guard su `ready` questo effetto girerebbe nella stessa commit
+    // dell'idratazione e salverebbe lo stato vuoto iniziale sopra la libreria
+    if (!ready) return
     localAdapter.write(state)
-  }, [state])
+  }, [state, ready])
 
   const log = useCallback(
     (
