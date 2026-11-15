@@ -253,6 +253,9 @@ export function mergeLibraryState(
 
   let imported = 0
   const byAnime = new Map(prev.entries.map((entry) => [entry.animeId, entry]))
+  // Un backup può usare id di voce diversi dai nostri: mappiamo per non perdere
+  // l'aggancio tra storico (`entryId`) e voce di libreria.
+  const idMap = new Map<string, string>()
 
   for (const incoming of safe.entries) {
     if (!incoming?.animeId || !incoming.anime) continue
@@ -260,8 +263,14 @@ export function mergeLibraryState(
     imported += 1
 
     if (!existing) {
-      byAnime.set(incoming.animeId, { ...incoming, id: incoming.id || uid() })
+      const localId = incoming.id || uid()
+      if (incoming.id) idMap.set(incoming.id, localId)
+      byAnime.set(incoming.animeId, { ...incoming, id: localId })
       continue
+    }
+
+    if (incoming.id && incoming.id !== existing.id) {
+      idMap.set(incoming.id, existing.id)
     }
 
     const newest =
@@ -285,7 +294,11 @@ export function mergeLibraryState(
 
   const activityById = new Map(prev.activity.map((record) => [record.id, record]))
   for (const record of safe.activity) {
-    if (!activityById.has(record.id)) activityById.set(record.id, record)
+    if (activityById.has(record.id)) continue
+    const mappedEntryId = record.entryId
+      ? (idMap.get(record.entryId) ?? record.entryId)
+      : record.entryId
+    activityById.set(record.id, { ...record, entryId: mappedEntryId })
   }
 
   const activity = [...activityById.values()]

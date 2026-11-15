@@ -9,7 +9,9 @@ import {
   useState,
 } from 'react'
 
-import { I18nProvider, type Locale } from './i18n'
+import { toast } from 'sonner'
+
+import { I18nProvider, translate, type Locale } from './i18n'
 import {
   type ActivityAction,
   type ActivityRecord,
@@ -33,6 +35,8 @@ import { localISODate, mergeLibraryState, parsePersistedState, uid } from './lib
  */
 
 const STORAGE_KEY = 'miru.state.v1'
+
+let storageWarned = false
 
 type PersistedState = {
   entries: LibraryEntry[]
@@ -105,6 +109,12 @@ const localAdapter = {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
     } catch (error) {
       console.log('[miru] persist failed', (error as Error).message)
+      // un fallimento di scrittura (quota piena, storage bloccato) va detto
+      // all'utente: senza avviso la libreria sembrerebbe salvata e non lo è
+      if (!storageWarned) {
+        storageWarned = true
+        toast.error(translate(state.preferences.locale, 'storage.saveFailed'))
+      }
     }
   },
 }

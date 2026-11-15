@@ -5,6 +5,20 @@ versioning [SemVer](https://semver.org/lang/it/).
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-11-15
+
+### Fixed
+
+- Gli eventi dello storico importati ora vengono riagganciati all'id locale della voce
+  (`idMap` in `mergeLibraryState`): prima restavano legati all'id del backup e non
+  comparivano nella scheda dell'anime (`activityFor` confronta l'id esatto).
+- Se il salvataggio locale fallisce (quota piena o storage bloccato) l'utente vede un
+  avviso, non solo una riga in console.
+
+### Added
+
+- Test dedicato al rimappaggio degli id tra backup e libreria locale.
+
 ## [0.1.1] - 2026-11-15
 
 ### Added

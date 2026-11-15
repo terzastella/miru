@@ -215,6 +215,8 @@ const it = {
   'common.add': 'Aggiungi',
   'common.remove': 'Rimuovi',
   'common.error': 'Qualcosa è andato storto.',
+  'storage.saveFailed':
+    'Impossibile salvare sul dispositivo: controlla lo spazio disponibile.',
   'common.of': 'di',
 
   'a11y.skipToContent': 'Salta al contenuto',
@@ -432,6 +434,8 @@ const en: Record<keyof typeof it, string> = {
   'common.add': 'Add',
   'common.remove': 'Remove',
   'common.error': 'Something went wrong.',
+  'storage.saveFailed':
+    "Couldn't save to this device: check the available space.",
   'common.of': 'of',
 
   'a11y.skipToContent': 'Skip to content',

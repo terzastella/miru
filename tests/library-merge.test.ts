@@ -202,6 +202,37 @@ test("l'import non tocca le preferenze locali non presenti nel backup", () => {
   assert.deepEqual(state.dismissedRecommendations, ['a', 'b'])
 })
 
+test('lo storico importato viene riagganciato alla voce locale', () => {
+  // stessa anime, id di voce diversi: 'backup-1' nel backup, 'local-1' in locale
+  const prev = baseState([entry('anilist:1', { id: 'local-1' })])
+
+  const payload = {
+    schemaVersion: 1,
+    exportedAt: '2026-03-01T00:00:00.000Z',
+    preferences: {},
+    entries: [entry('anilist:1', { id: 'backup-1' })],
+    activity: [
+      { ...activity('e1', '2026-01-02T00:00:00.000Z'), entryId: 'backup-1' },
+      { ...activity('e2', '2026-01-03T00:00:00.000Z'), entryId: null },
+    ],
+  } as unknown as MiruExport
+
+  const { state } = mergeLibraryState(prev, payload)
+
+  assert.equal(state.entries[0].id, 'local-1')
+  const linked = state.activity.filter((record) => record.entryId === 'local-1')
+  assert.equal(linked.length, 1)
+  assert.equal(linked[0].id, 'e1')
+  assert.equal(
+    state.activity.find((record) => record.id === 'e2')?.entryId,
+    null,
+  )
+  assert.equal(
+    state.activity.some((record) => record.entryId === 'backup-1'),
+    false,
+  )
+})
+
 test('localISODate usa il calendario locale, non UTC', () => {
   const moment = new Date('2026-01-01T00:30:00Z')
   const local = moment.toLocaleDateString('sv-SE') // YYYY-MM-DD nel fuso locale
