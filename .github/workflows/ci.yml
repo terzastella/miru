@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Web + export desktop
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installa le dipendenze (lockfile)
+        run: npm ci
+
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Build web (route API incluse)
+        run: npm run build
+
+      - name: Build export statico per il desktop
+        run: npm run build:desktop
+
+      # Il build Rust/Tauri non è qui: richiede windows-latest + MSVC (~5-8 min)
+      # e il binario prodotto non è distribuibile senza firma. Si compila in locale
+      # con `npm run desktop:portable`.

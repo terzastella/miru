@@ -17,6 +17,7 @@ Desktop app for Windows: episode progress, ratings, notes, tags and discovery fr
   <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000">
   <img alt="Tauri 2" src="https://img.shields.io/badge/Tauri-2-24c8db">
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.7-3178c6">
+  <img alt="CI" src="https://github.com/terzastella/miru/actions/workflows/ci.yml/badge.svg">
 </p>
 
 <p align="center">
@@ -125,6 +126,8 @@ docs/              documentation and screenshots
 ## License
 
 [MIT](LICENSE) © 2026 Terzastella
+
+Version history: [CHANGELOG.md](CHANGELOG.md).
 
 ## Credits
 

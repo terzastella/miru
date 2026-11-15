@@ -17,6 +17,7 @@ App desktop per Windows: progresso episodi, voti, note, tag e scoperta di nuovi 
   <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000">
   <img alt="Tauri 2" src="https://img.shields.io/badge/Tauri-2-24c8db">
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.7-3178c6">
+  <img alt="CI" src="https://github.com/terzastella/miru/actions/workflows/ci.yml/badge.svg">
 </p>
 
 <p align="center">
@@ -128,6 +129,8 @@ docs/              documentazione e screenshot
 ## Licenza
 
 [MIT](LICENSE) © 2026 Terzastella
+
+Cronologia delle versioni: [CHANGELOG.md](CHANGELOG.md).
 
 ## Crediti
 
