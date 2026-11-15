@@ -18,11 +18,20 @@ App desktop per Windows: progresso episodi, voti, note, tag e scoperta di nuovi 
 <p align="center">
   <img src="docs/assets/home.webp" width="49%" alt="Home con consigliati e libreria">
   <img src="docs/assets/detail.webp" width="49%" alt="Scheda anime con elenco episodi">
+  <br/>
+  <sub>Home con consigliati e libreria · scheda anime con episodi e stato</sub>
 </p>
 
 <p align="center">
-  <img src="docs/assets/splash.webp" width="32%" alt="Schermata di caricamento del catalogo">
-  <img src="docs/assets/explore.webp" width="66%" alt="Esplora con filtri e tendenze">
+  <img src="docs/assets/explore.webp" width="100%" alt="Esplora con filtri e tendenze della stagione">
+  <br/>
+  <sub>Esplora: filtri per tipo, stato, anno, episodi, studio, generi e voto minimo</sub>
+</p>
+
+<p align="center">
+  <img src="docs/assets/splash-crop.webp" width="55%" alt="Schermata di caricamento del catalogo al primo avvio">
+  <br/>
+  <sub>Primo avvio: il catalogo (~1200 titoli) viene scaricato una volta sola</sub>
 </p>
 
 MIRU è un tracker anime locale. La UI è Next.js 16 (App Router, React 19, Tailwind v4, shadcn/base-ui), il guscio desktop è Tauri v2: una finestra nativa WebView2, nessun browser, nessun Node.js a runtime.
