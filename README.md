@@ -20,20 +20,20 @@ Desktop app for Windows: episode progress, ratings, notes, tags and discovery fr
 </p>
 
 <p align="center">
-  <img src="docs/assets/home.webp" width="49%" alt="Home with recommendations and library">
-  <img src="docs/assets/detail.webp" width="49%" alt="Anime detail with episode list">
+  <img src="docs/assets/home-en.webp" width="49%" alt="Home with recommendations and library">
+  <img src="docs/assets/detail-en.webp" width="49%" alt="Anime detail with episode list">
   <br/>
   <sub>Home with recommendations and library · anime detail with episodes and status</sub>
 </p>
 
 <p align="center">
-  <img src="docs/assets/explore.webp" width="100%" alt="Explore with filters and seasonal trends">
+  <img src="docs/assets/explore-en.webp" width="100%" alt="Explore with filters and seasonal trends">
   <br/>
   <sub>Explore: filters by type, status, year, episodes, studio, genres and minimum score</sub>
 </p>
 
 <p align="center">
-  <img src="docs/assets/splash-crop.webp" width="55%" alt="Catalog loading screen on first launch">
+  <img src="docs/assets/splash-en.webp" width="55%" alt="Catalog loading screen on first launch">
   <br/>
   <sub>First launch: the catalog (~1200 titles) is downloaded once</sub>
 </p>

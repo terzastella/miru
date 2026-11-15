@@ -18,6 +18,11 @@ a runtime. Aggiornato 15/11/2026: icona, layout fluido, catalogo precaricato.
   `<html lang>` segue la preferenza, il cambio resta in Impostazioni → Lingua.
 - README.md in inglese + `README.it.md` (versione italiana, con link incrociati);
   metadati neutri/inglesi in `app/layout.tsx`.
+- Screenshot separati per lingua: `docs/assets/*-en.webp` (README.md) e
+  `docs/assets/*-it.webp` (README.it.md), catturati dall'app nei due locale.
+- Ricerca locale normalizzata (`normalizeText` in `lib/catalog.ts`): "fullmetal alchemist
+  brotherhood" trova "Fullmetal Alchemist: Brotherhood" senza andare in rete.
+- Select Lingua/Tema in Impostazioni mostra l'etichetta ("English", "Dark") e non il codice.
 - LICENSE MIT.
 - `tsc --noEmit` = 0. Web build invariata (`/api/anime/*` attive).
 

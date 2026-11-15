@@ -20,20 +20,20 @@ App desktop per Windows: progresso episodi, voti, note, tag e scoperta di nuovi 
 </p>
 
 <p align="center">
-  <img src="docs/assets/home.webp" width="49%" alt="Home con consigliati e libreria">
-  <img src="docs/assets/detail.webp" width="49%" alt="Scheda anime con elenco episodi">
+  <img src="docs/assets/home-it.webp" width="49%" alt="Home con consigliati e libreria">
+  <img src="docs/assets/detail-it.webp" width="49%" alt="Scheda anime con elenco episodi">
   <br/>
   <sub>Home con consigliati e libreria · scheda anime con episodi e stato</sub>
 </p>
 
 <p align="center">
-  <img src="docs/assets/explore.webp" width="100%" alt="Esplora con filtri e tendenze della stagione">
+  <img src="docs/assets/explore-it.webp" width="100%" alt="Esplora con filtri e tendenze della stagione">
   <br/>
   <sub>Esplora: filtri per tipo, stato, anno, episodi, studio, generi e voto minimo</sub>
 </p>
 
 <p align="center">
-  <img src="docs/assets/splash-crop.webp" width="55%" alt="Schermata di caricamento del catalogo al primo avvio">
+  <img src="docs/assets/splash-it.webp" width="55%" alt="Schermata di caricamento del catalogo al primo avvio">
   <br/>
   <sub>Primo avvio: il catalogo (~1200 titoli) viene scaricato una volta sola</sub>
 </p>
