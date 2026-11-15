@@ -1,6 +1,7 @@
 # MIRU — Indice documentazione
 
-Riferimento architetturale: `../SPEC-TECNICA.md` (specifica completa, sez. 0-23).
+Riferimento architetturale: la specifica tecnica completa (sez. 0-23) non è inclusa
+in questo repository; i documenti qui sotto la citano come `SPEC-TECNICA.md`.
 
 | Area | Doc | Contenuto |
 |---|---|---|

@@ -80,8 +80,8 @@ dettaglio a 1024 salvando gli screenshot.
 - `MIRU.exe` + `tools/launcher.cs` in radice sono il launcher precedente
   (avviava `next start` in un prompt e apriva il browser): sostituito da questo.
 - CSP attiva in `tauri.conf.json`: `default-src 'self'`, script/stile inline (richiesti
-  dall'export statico di Next), `img-src https:` per le copertine, `connect-src` solo
+  dall'export statico di Next), `img-src` ristretto ai CDN delle copertine
+  (`*.anilist.co`, `cdn.myanimelist.net`, `media.kitsu.app/.io`), `connect-src` solo
   verso l'IPC di Tauri (le chiamate esterne passano dal plugin HTTP in Rust).
-  Restringere `img-src` ai CDN effettivi è un affinamento futuro.
 - Se Jikan non risponde, ricerca e dettaglio degradano su AniList/Kitsu
   (`getAnimeDetail` ora ha il fallback Jikan → AniList).

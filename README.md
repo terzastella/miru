@@ -119,7 +119,7 @@ docs/              documentation and screenshots
 - The desktop app is **Windows only** (WebView2). The web version runs anywhere.
 - The prefetched catalog is the ~1200 most popular and top-rated titles, not the whole AniList database: niche searches go to the network.
 - If Jikan doesn't answer (rate limit or a network that blocks it) the first attempt costs ~7 s before falling back to AniList.
-- CSP is enabled in `tauri.conf.json`: `default-src 'self'`, inline script/style (required by the static Next export), `img-src https:` for covers, and `connect-src` limited to Tauri's IPC (external calls go through the Rust HTTP plugin). Narrowing `img-src` to the actual CDNs is a future refinement.
+- CSP is enabled in `tauri.conf.json`: `default-src 'self'`, inline script/style (required by the static Next export), `img-src` limited to the cover CDNs used by Jikan, AniList and Kitsu, and `connect-src` limited to Tauri's IPC (external calls go through the Rust HTTP plugin).
 - No backend, no authentication, no cross-device sync: your data lives on one machine.
 
 ## License

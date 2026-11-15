@@ -120,9 +120,9 @@ docs/              documentazione e screenshot
 - Il catalogo precaricato sono i ~1200 titoli più popolari e più votati, non l'intero database AniList: una ricerca di nicchia esce in rete.
 - Se Jikan non risponde (rate limit o rete che lo blocca) il primo tentativo costa ~7 s prima del fallback AniList.
 - CSP attiva in `tauri.conf.json`: `default-src 'self'`, script e stili inline (richiesti
-  dall'export statico di Next), `img-src https:` per le copertine, `connect-src` limitato
-  all'IPC di Tauri (le chiamate esterne passano dal plugin HTTP in Rust). Restringere
-  `img-src` ai CDN effettivi è un affinamento futuro.
+  dall'export statico di Next), `img-src` limitato ai CDN delle copertine di Jikan,
+  AniList e Kitsu, `connect-src` limitato all'IPC di Tauri (le chiamate esterne passano
+  dal plugin HTTP in Rust).
 - Nessun backend, nessuna autenticazione, nessuna sincronizzazione tra dispositivi: i dati stanno su una macchina sola.
 
 ## Licenza

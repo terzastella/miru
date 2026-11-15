@@ -12,9 +12,13 @@ a runtime. Aggiornato 15/11/2026: icona, layout fluido, catalogo precaricato.
 - Layout: nessun overflow orizzontale da 900 a 1920 px; dettaglio a 1024 dentro il viewport
   (`node scripts/check-layout.mjs` con `npm start` attivo).
 - Scrollbar: thumb scuro arrotondato senza frecce (globals.css), niente barra nativa.
-- Sicurezza: `npm audit --omit=dev` = 0 vulnerabilità; CSP attiva e verificata (ricerca
-  remota via IPC funzionante); `.gitignore` copre `.env*`, `.vscode/`, `.idea/`.
-  Restano 6 advisory solo dev (CLI shadcn, non finisce nell'exe).
+- Sicurezza: `npm audit --omit=dev` = 0 vulnerabilità; CSP attiva (img-src ristretto ai
+  CDN, ricerca remota via IPC funzionante, verificata a schermo); `.gitignore` copre
+  `.env*`, `.vscode/`, `.idea/`. Restano 6 advisory solo dev (CLI shadcn, non finisce
+  nell'exe).
+- Pulizia: rimosso `pnpm-lock.yaml` e il campo `pnpm` (npm è il package manager),
+  rimossi i placeholder/icone v0 da `public/`, favicon MIRU in `app/icon.png` e
+  `app/apple-icon.png`, tolto `typescript.ignoreBuildErrors` (il build ora tipizza).
 - Persistenza: aggiunto un titolo, chiuso e riaperto l'exe → libreria intatta.
 - Lingua: primo avvio senza preferenze → segue `navigator.language` (verificato in browser:
   `en-US` → nav "Home Library Recommended…", `it-IT` → "Home Libreria Consigliati…");

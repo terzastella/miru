@@ -6,9 +6,6 @@ const desktop = process.env.MIRU_DESKTOP === '1'
 const routeExt = desktop ? [] : ['handler.ts']
 
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
     unoptimized: true,
   },
