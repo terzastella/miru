@@ -89,7 +89,7 @@ const localAdapter = {
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
     } catch (error) {
-      console.log('[v0] persist failed', (error as Error).message)
+      console.log('[miru] persist failed', (error as Error).message)
     }
   },
 }

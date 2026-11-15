@@ -29,3 +29,6 @@ dev-server.log
 # Editor e IDE
 .vscode/
 .idea/
+
+# handoff interno, non pubblicato
+NOTES.md

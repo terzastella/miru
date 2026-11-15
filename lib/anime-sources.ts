@@ -579,7 +579,7 @@ export async function searchAnime(query: SearchQuery): Promise<SearchResult> {
           return result
         }
       } catch (error) {
-        console.log('[v0] source failed', (error as Error).message)
+        console.log('[miru] source failed', (error as Error).message)
       }
     }
     if (cached) return { ...cached.value, stale: true, source: 'cache', degraded: true }
@@ -628,7 +628,7 @@ export async function getAnimeDetail(id: string): Promise<DetailResult> {
           return result
         } catch (error) {
           // Jikan giù o lento: `rawId` è un MAL id, quindi AniList lo risolve
-          console.log('[v0] detail jikan fallback', (error as Error).message)
+          console.log('[miru] detail jikan fallback', (error as Error).message)
         }
       }
       if (source === 'kitsu') {
@@ -683,7 +683,7 @@ export async function getAnimeDetail(id: string): Promise<DetailResult> {
       cacheSet(key, result, TTL_DETAIL)
       return result
     } catch (error) {
-      console.log('[v0] detail failed', (error as Error).message)
+      console.log('[miru] detail failed', (error as Error).message)
       if (cached) return { ...cached.value, stale: true, source: 'cache' as SourceName }
       return { anime: null, episodes: [], source: 'cache', stale: true }
     }
@@ -710,7 +710,7 @@ async function jikanEpisodes(
     }))
     if (episodes.length > 0) return episodes
   } catch (error) {
-    console.log('[v0] episodes fallback', (error as Error).message)
+    console.log('[miru] episodes fallback', (error as Error).message)
   }
   if (!total) return []
   return Array.from({ length: total }, (_, i) => ({

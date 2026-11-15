@@ -31,7 +31,6 @@ export const metadata: Metadata = {
   title: 'MIRU — anime tracker',
   description:
     'MIRU is a local anime tracker for Windows: episode progress, ratings, notes and tags, with discovery from Jikan, AniList and Kitsu.',
-  generator: 'v0.app',
   applicationName: 'MIRU',
   keywords: [
     'anime tracker',
